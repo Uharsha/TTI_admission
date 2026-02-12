@@ -74,11 +74,12 @@ router.post(
       const admission = new Admission(admissionData);
       const user = await admission.save();
 
-      /* 📧 MAIL TO STUDENT */
-      await transporter.sendMail({
-        to: user.email,
-        subject: "Admission Submitted – TTI",
-        html: `Dear ${user.name}, <br> <br>
+      /* 📧 Non-blocking mails: submission should not fail if mail config is broken */
+      const mailResults = await Promise.allSettled([
+        transporter.sendMail({
+          to: user.email,
+          subject: "Admission Submitted – TTI",
+          html: `Dear ${user.name}, <br> <br>
 
 Thank you for applying to the <b>TTI Foundation</b>.<br>
 
@@ -92,13 +93,11 @@ Warm regards,<br>
 This is an automatically generated email. Replies to this message are not monitored.
 </p>
 `,
-      });
-
-      /* 📧 MAIL TO HEAD */
-      await transporter.sendMail({
-        to: process.env.HEAD_EMAIL,
-        subject: "New Admission Request",
-        html: `
+        }),
+        transporter.sendMail({
+          to: process.env.HEAD_EMAIL,
+          subject: "New Admission Request",
+          html: `
          Dear Sir/Madam,<br>
 
 A new admission application has been submitted and requires your review.<br><br>
@@ -126,12 +125,26 @@ This is an automatically generated email. Replies to this message are not monito
 </p>
 
         `,
+        }),
+      ]);
+
+      const mailFailures = mailResults.filter((result) => result.status === "rejected");
+      if (mailFailures.length > 0) {
+        console.error("Admission mail delivery failed:", mailFailures.map((m) => m.reason?.message || m.reason));
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Admission submitted successfully!",
+        mailWarning: mailFailures.length > 0 ? "Submission saved, but one or more notification emails failed." : null,
       });
 
-      res.status(201).json({ success: true, message: "Admission submitted successfully!" });
-
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      if (err && err.code === 11000) {
+        return res.status(409).json({ error: "You have already submitted the form with this email or mobile." });
+      }
+      console.error("saveAdmission failed:", err);
+      res.status(500).json({ error: err.message || "Internal server error" });
     }
   }
 );
