@@ -9,9 +9,7 @@ import Ratio from "./Ratio";
 import RatioKnowledge from "./RatioKnowledge";
 import RatioBasic from "./RatioBasic";
 
-const API_BASE_URL = (
-  import.meta.env.VITE_API_URL || "https://tti-dashborad.onrender.com"
-).replace(/\/$/, "");
+const API_BASE_URL = "https://tti-dashborad.onrender.com";
 
 function AdmissionForm() {
   const initialFormState = {
@@ -330,3 +328,4 @@ const handleChange = (e) => {
 }
 
 export default AdmissionForm;
+
