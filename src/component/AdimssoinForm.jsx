@@ -10,6 +10,16 @@ import RatioKnowledge from "./RatioKnowledge";
 import RatioBasic from "./RatioBasic";
 
 const API_BASE_URL = "https://tti-dashborad.onrender.com";
+const formatDobForAssistiveText = (value) => {
+  if (!value) return "";
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
 
 function AdmissionForm() {
   const initialFormState = {
@@ -85,33 +95,35 @@ const handleChange = (e) => {
     const formData = new FormData(e.target);
     
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/admission/saveAdmission`,
-        {
-          method: "POST",
-          body: formData
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/admission/saveAdmission`, {
+        method: "POST",
+        body: formData
+      });
 
-      const data = await res.json();
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
 
       if (res.ok) {
+        const warningText = Array.isArray(data.warnings) && data.warnings.length
+          ? ` Mail status: ${data.warnings.join(" ")}`
+          : "";
         setStatus("success");
-        setMessage(data.message || "Submitted successfully!");
+        setMessage((data.message || "Submitted successfully!") + warningText);
 
         e.target.reset();
         setForm(initialFormState);
         localStorage.removeItem("admissionForm");
-      }
-         else if (data.error.includes("duplicate key")) {
-      setStatus("error");
-      setMessage("You have already submitted the form.");
-    }
-       else {
+      } else if ((data.error || "").toLowerCase().includes("duplicate key")) {
         setStatus("error");
-        const errorText = data.error || data.message || "Submission failed!";
-  setMessage(errorText);
-
+        setMessage("You have already submitted the form.");
+      } else {
+        setStatus("error");
+        const errorText = data.error || data.message || `Submission failed with status ${res.status}`;
+        setMessage(errorText);
       }
     } catch (err) {
       setStatus("error");
@@ -135,7 +147,7 @@ const handleChange = (e) => {
       >
         <p id="admission-title" className="title">Admission</p>
         <h2>
-          <span style={{ color: "white" }}>Techincal Training Institue of PBMA</span>
+          <span style={{ color: "white" }}>Technical Training Institute of PBMA</span>
         </h2>
 
         <InputField
@@ -176,14 +188,22 @@ const handleChange = (e) => {
 
         <InputField
           id="dob"
-          label="Date of birth"
-          placeholder="Enter your date of birth"
+          label="Date of Birth"
           type="date"
           name="dob"
           value={form.dob}
           onChange={handleChange}
+          aria-describedby="dob-help dob-preview"
           required
         />
+        <p id="dob-help" className="dob-help-text">
+          Use year format YYYY. Example: 2001.
+        </p>
+        {form.dob && (
+          <p id="dob-preview" className="dob-preview-text" aria-live="polite">
+            Selected Date of Birth: {formatDobForAssistiveText(form.dob)}
+          </p>
+        )}
 
         <GenderRadio
           value={form.gender}
@@ -310,16 +330,21 @@ const handleChange = (e) => {
         {status && (
           <div className={`status-box ${status}`} role="alert">
             <div className="status-icon">
-              {status === "success" ? "✔" : "✖"}
+              {status === "success" ? "OK" : "ERR"}
             </div>
             <p>{message}</p>
           </div>
         )}
 
-        {/* LOADER */}
         {loading && (
-          <div className="loader" role="status">
-            <div className="spinner"></div>
+          <div className="submit-progress" role="status" aria-live="polite">
+            <div className="submit-orbit" aria-hidden="true">
+              <span className="submit-orbit-core"></span>
+              <span className="submit-orbit-ring submit-orbit-ring-a"></span>
+              <span className="submit-orbit-ring submit-orbit-ring-b"></span>
+            </div>
+            <p className="submit-progress-title">Uploading your documents...</p>
+            <p className="submit-progress-subtitle">Please wait. It may take a couple of minutes.</p>
           </div>
         )}
       </form>
