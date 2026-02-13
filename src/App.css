@@ -1266,6 +1266,41 @@ input[type="checkbox"]:checked {
   text-align: center;
 }
 
+.submit-orbit {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 2px auto 10px auto;
+}
+
+.submit-orbit-core {
+  position: absolute;
+  inset: 27px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  box-shadow: 0 0 0 5px rgba(14, 165, 233, 0.25);
+}
+
+.submit-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid transparent;
+  border-radius: 50%;
+}
+
+.submit-orbit-ring-a {
+  border-top-color: #7dd3fc;
+  border-right-color: #38bdf8;
+  animation: orbit-spin 1s linear infinite;
+}
+
+.submit-orbit-ring-b {
+  inset: 10px;
+  border-bottom-color: #e0f2fe;
+  border-left-color: #60a5fa;
+  animation: orbit-spin-reverse 1.2s linear infinite;
+}
+
 .submit-progress-title {
   margin: 0;
   color: #e0f2fe;
@@ -1278,59 +1313,14 @@ input[type="checkbox"]:checked {
   font-size: 13px;
 }
 
-/* Loader styles */
-.loader {
-  position: relative;
-  width: 120px;
-  height: 90px;
-  margin: 12px auto;
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.loader:before {
-  content: "";
-  position: absolute;
-  bottom: 30px;
-  left: 50px;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), #22d3ee);
-  animation: loading-bounce 0.5s ease-in-out infinite alternate;
-  box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
-}
-
-.loader:after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 7px;
-  width: 45px;
-  border-radius: 4px;
-  box-shadow: 0 5px 0 #38bdf8, -35px 50px 0 #38bdf8, -70px 95px 0 #38bdf8;
-  animation: loading-step 1s ease-in-out infinite;
-}
-
-@keyframes loading-bounce {
-  0% { transform: scale(1, 0.7); }
-  40% { transform: scale(0.8, 1.2); }
-  60% { transform: scale(1, 1); }
-  100% { bottom: 140px; }
-}
-
-@keyframes loading-step {
-  0% {
-    box-shadow: 0 10px 0 rgba(0, 0, 0, 0),
-            0 10px 0 #38bdf8,
-            -35px 50px 0 #38bdf8,
-            -70px 90px 0 #38bdf8;
-  }
-  100% {
-    box-shadow: 0 10px 0 #38bdf8,
-            -35px 50px 0 #38bdf8,
-            -70px 90px 0 #38bdf8,
-            -70px 90px 0 rgba(0, 0, 0, 0);
-  }
+@keyframes orbit-spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
 }
 
 /* ===== RESPONSIVE DESIGN ===== */

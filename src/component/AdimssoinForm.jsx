@@ -339,7 +339,11 @@ const handleChange = (e) => {
 
         {loading && (
           <div className="submit-progress" role="status" aria-live="polite">
-            <div className="loader" aria-hidden="true"></div>
+            <div className="submit-orbit" aria-hidden="true">
+              <span className="submit-orbit-core"></span>
+              <span className="submit-orbit-ring submit-orbit-ring-a"></span>
+              <span className="submit-orbit-ring submit-orbit-ring-b"></span>
+            </div>
             <p className="submit-progress-title">Uploading your documents...</p>
             <p className="submit-progress-subtitle">Please wait. It may take a couple of minutes.</p>
           </div>
