@@ -109,11 +109,8 @@ const handleChange = (e) => {
       }
 
       if (res.ok) {
-        const warningText = Array.isArray(data.warnings) && data.warnings.length
-          ? ` Mail status: ${data.warnings.join(" ")}`
-          : "";
         setStatus("success");
-        setMessage((data.message || "Submitted successfully!") + warningText);
+        setMessage("Submitted successfully!");
 
         e.target.reset();
         setForm(initialFormState);
