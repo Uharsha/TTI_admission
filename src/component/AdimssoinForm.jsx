@@ -20,6 +20,34 @@ const formatDobForAssistiveText = (value) => {
     year: "numeric",
   });
 };
+const submitAdmission = (formData, onProgress) =>
+  new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_BASE_URL}/admission/saveAdmission`);
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable) return;
+      const percent = Math.round((event.loaded / event.total) * 100);
+      onProgress(Math.min(95, Math.max(1, percent)));
+    };
+
+    xhr.onload = () => {
+      let data = {};
+      try {
+        data = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+      } catch {
+        data = {};
+      }
+      resolve({
+        ok: xhr.status >= 200 && xhr.status < 300,
+        status: xhr.status,
+        data,
+      });
+    };
+
+    xhr.onerror = () => reject(new Error("Network request failed."));
+    xhr.send(formData);
+  });
 
 function AdmissionForm() {
   const initialFormState = {
@@ -54,6 +82,8 @@ function AdmissionForm() {
   const [status, setStatus] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitProgress, setSubmitProgress] = useState(0);
+  const [submitStage, setSubmitStage] = useState("Preparing files...");
 
   /* ================== SAVE FORM TO LOCALSTORAGE ================== */
   useEffect(() => {
@@ -78,6 +108,8 @@ const handleChange = (e) => {
     setLoading(true);
     setStatus("");
     setMessage("");
+    setSubmitProgress(0);
+    setSubmitStage("Preparing files...");
 
     if (!form.course) {
       alert("Please select a course!");
@@ -95,17 +127,13 @@ const handleChange = (e) => {
     const formData = new FormData(e.target);
     
     try {
-      const res = await fetch(`${API_BASE_URL}/admission/saveAdmission`, {
-        method: "POST",
-        body: formData
+      setSubmitStage("Uploading documents...");
+      const res = await submitAdmission(formData, (percent) => {
+        setSubmitProgress(percent);
       });
-
-      let data = {};
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
-      }
+      const data = res.data || {};
+      setSubmitStage("Finalizing submission...");
+      setSubmitProgress(100);
 
       if (res.ok) {
         const warningText = Array.isArray(data.warnings) && data.warnings.length
@@ -130,6 +158,10 @@ const handleChange = (e) => {
       setMessage("Server error: " + err.message);
     } finally {
       setLoading(false);
+      setTimeout(() => {
+        setSubmitProgress(0);
+        setSubmitStage("Preparing files...");
+      }, 600);
     }
    
   };
@@ -338,13 +370,27 @@ const handleChange = (e) => {
 
         {loading && (
           <div className="submit-progress" role="status" aria-live="polite">
-            <div className="submit-orbit" aria-hidden="true">
-              <span className="submit-orbit-core"></span>
-              <span className="submit-orbit-ring submit-orbit-ring-a"></span>
-              <span className="submit-orbit-ring submit-orbit-ring-b"></span>
+            <div className="submit-progress-head">
+              <div
+                className="submit-meter"
+                role="progressbar"
+                aria-label="Submission progress"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={submitProgress}
+                style={{ "--progress": `${submitProgress}%` }}
+              >
+                <span className="submit-meter-fill" aria-hidden="true"></span>
+                <span className="submit-meter-value">{submitProgress}%</span>
+              </div>
+              <div className="submit-progress-copy">
+                <p className="submit-progress-title">{submitStage}</p>
+                <p className="submit-progress-subtitle">Please wait. It may take a couple of minutes.</p>
+              </div>
             </div>
-            <p className="submit-progress-title">Uploading your documents...</p>
-            <p className="submit-progress-subtitle">Please wait. It may take a couple of minutes.</p>
+            <div className="submit-progress-track" aria-hidden="true">
+              <div className="submit-progress-track-fill" style={{ width: `${submitProgress}%` }}></div>
+            </div>
           </div>
         )}
       </form>
