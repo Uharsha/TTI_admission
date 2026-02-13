@@ -1263,49 +1263,7 @@ input[type="checkbox"]:checked {
   border-radius: 14px;
   border: 1px solid rgba(125, 211, 252, 0.45);
   background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(30, 64, 175, 0.22));
-}
-
-.submit-progress-head {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.submit-progress-copy {
-  flex: 1;
-  text-align: left;
-}
-
-.submit-meter {
-  position: relative;
-  width: 78px;
-  height: 78px;
-  min-width: 78px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid rgba(125, 211, 252, 0.85);
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-}
-
-.submit-meter-fill {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--progress, 0%);
-  background: linear-gradient(to top, #15803d 0%, #22c55e 65%, #4ade80 100%);
-  transition: height 0.25s ease;
-}
-
-.submit-meter-value {
-  position: absolute;
-  z-index: 2;
-  font-size: 15px;
-  font-weight: 800;
-  color: #0f172a;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+  text-align: center;
 }
 
 .submit-progress-title {
@@ -1320,30 +1278,58 @@ input[type="checkbox"]:checked {
   font-size: 13px;
 }
 
-.submit-progress-track {
-  margin-top: 12px;
-  width: 100%;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
-  overflow: hidden;
+/* Loader styles */
+.loader {
+  position: relative;
+  width: 120px;
+  height: 90px;
+  margin: 12px auto;
 }
 
-.submit-progress-track-fill {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #16a34a, #22c55e, #4ade80);
-  transition: width 0.25s ease;
+.loader:before {
+  content: "";
+  position: absolute;
+  bottom: 30px;
+  left: 50px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #22d3ee);
+  animation: loading-bounce 0.5s ease-in-out infinite alternate;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
 }
 
-@media (max-width: 520px) {
-  .submit-progress-head {
-    flex-direction: column;
-    align-items: center;
+.loader:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 7px;
+  width: 45px;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 #38bdf8, -35px 50px 0 #38bdf8, -70px 95px 0 #38bdf8;
+  animation: loading-step 1s ease-in-out infinite;
+}
+
+@keyframes loading-bounce {
+  0% { transform: scale(1, 0.7); }
+  40% { transform: scale(0.8, 1.2); }
+  60% { transform: scale(1, 1); }
+  100% { bottom: 140px; }
+}
+
+@keyframes loading-step {
+  0% {
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0),
+            0 10px 0 #38bdf8,
+            -35px 50px 0 #38bdf8,
+            -70px 90px 0 #38bdf8;
   }
-
-  .submit-progress-copy {
-    text-align: center;
+  100% {
+    box-shadow: 0 10px 0 #38bdf8,
+            -35px 50px 0 #38bdf8,
+            -70px 90px 0 #38bdf8,
+            -70px 90px 0 rgba(0, 0, 0, 0);
   }
 }
 
