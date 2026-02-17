@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Rules.css";
 
@@ -48,6 +49,20 @@ const sections = [
 
 function Rules() {
   const navigate = useNavigate();
+  const headingRef = useRef(null);
+
+  useEffect(() => {
+    // Ensure route always opens from top.
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+
+    // Move focus to top heading (accessibility + prevent end focus jump).
+    if (headingRef.current) {
+      headingRef.current.focus({ preventScroll: true });
+    }
+  }, []);
 
   return (
     <main id="main" className="tti-rules-page" role="main">
@@ -57,7 +72,7 @@ function Rules() {
       <article className="tti-rules-card">
         <header className="tti-rules-header">
           <p className="tti-rules-kicker">Admission Policy</p>
-          <h1>Rules & Regulations</h1>
+          <h1 ref={headingRef} tabIndex="-1">Rules & Regulations</h1>
           <p className="tti-rules-subtitle">Technical Training Institute & Hostel</p>
         </header>
 
