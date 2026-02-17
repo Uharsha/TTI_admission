@@ -334,9 +334,19 @@ const handleChange = (e) => {
          aria-required={true}
         />
 
-          <label htmlFor="declaration" style={{ fontSize: "12px", cursor: "pointer" }} required >
-            I hereby declare that the information provided is true to the best of my knowledge. I understand that any false information may lead to the rejection of my application. Read the <Link to="/rules" className="rules-link">Rules and Regulations</Link> carefully before submitting the form.
-          </label>
+          <div style={{ fontSize: "12px" }}>
+            <label htmlFor="declaration" style={{ cursor: "pointer" }} required>
+              I hereby declare that the information provided is true to the best of my knowledge. I understand that any false information may lead to the rejection of my application.
+            </label>{" "}
+            <Link
+              to="/rules"
+              className="rules-link"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Read the Rules and Regulations
+            </Link>{" "}
+            before submitting the form.
+          </div>
         </div>
 
         <div className="form-buttons-wrapper">
