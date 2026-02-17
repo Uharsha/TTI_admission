@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Rules.css";
 
@@ -51,16 +51,21 @@ function Rules() {
   const navigate = useNavigate();
   const headingRef = useRef(null);
 
-  useEffect(() => {
-    // Ensure route always opens from top.
+  useLayoutEffect(() => {
+    // Ensure route always opens from top, even if browser restores old position.
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      if (headingRef.current) {
+        headingRef.current.scrollIntoView({ block: "start", behavior: "auto" });
+      }
     });
 
-    // Move focus to top heading (accessibility + prevent end focus jump).
+    // Keep focus at the top heading (accessibility).
     if (headingRef.current) {
-      headingRef.current.focus({ preventScroll: true });
+      headingRef.current.focus();
     }
   }, []);
 

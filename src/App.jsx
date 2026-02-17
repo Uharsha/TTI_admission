@@ -18,7 +18,7 @@
 // export default App
 
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import TTIDescription from "./component/decription/TTIDescription";
 import AdmissionForm from "./component/AdimssoinForm";
@@ -30,11 +30,17 @@ import './App.css'
 import Rules from "./component/data/Rules";
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // Hard reset scroll for SPA route changes.
+    if (typeof window !== "undefined") {
+      window.history.scrollRestoration = "manual";
+    }
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [pathname]);
+  }, [pathname, search]);
 
   return null;
 }
