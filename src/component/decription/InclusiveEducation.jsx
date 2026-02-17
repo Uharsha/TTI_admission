@@ -1,8 +1,29 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 
 function InclusiveEducation() {
   const navigate = useNavigate();
-     function sum (a, b) {}
+
+  const benefits = [
+    {
+      id: "accessibility",
+      icon: "♿",
+      title: "Accessibility",
+      text: "Fully accessible facilities and learning environments",
+    },
+    {
+      id: "support-system",
+      icon: "🤝",
+      title: "Support System",
+      text: "Dedicated support team for special needs",
+    },
+    {
+      id: "diversity",
+      icon: "🌈",
+      title: "Diversity",
+      text: "Celebrating diversity and inclusive community",
+    },
+  ];
+
   return (
     <div id="main" role="main" className="feature-detail-container">
       <div className="feature-detail-card">
@@ -48,21 +69,24 @@ function InclusiveEducation() {
           <section className="detail-section">
             <h2>Why Choose Our Inclusive Model</h2>
             <div className="benefits-grid">
-              <div className="benefit-box">
-                <div className="benefit-icon">♿</div>
-                <h3>Accessibility</h3>
-                <p>Fully accessible facilities and learning environments</p>
-              </div>
-              <div className="benefit-box">
-                <div className="benefit-icon">🤝</div>
-                <h3>Support System</h3>
-                <p>Dedicated support team for special needs</p>
-              </div>
-              <div className="benefit-box">
-                <div className="benefit-icon">🌈</div>
-                <h3>Diversity</h3>
-                <p>Celebrating diversity and inclusive community</p>
-              </div>
+              {benefits.map((item) => (
+                <div
+                  key={item.id}
+                  className="benefit-box"
+                  role="button"
+                  tabIndex="0"
+                  onClick={() => navigate(`/benefits/${item.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      navigate(`/benefits/${item.id}`);
+                    }
+                  }}
+                >
+                  <div className="benefit-icon">{item.icon}</div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -76,3 +100,4 @@ function InclusiveEducation() {
 }
 
 export default InclusiveEducation;
+

@@ -1,7 +1,28 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 
 function CareerFocused() {
   const navigate = useNavigate();
+
+  const benefits = [
+    {
+      id: "skill-enhancement",
+      icon: "📈",
+      title: "Skill Enhancement",
+      text: "Master in-demand skills for career advancement",
+    },
+    {
+      id: "job-placement",
+      icon: "🏢",
+      title: "Job Placement",
+      text: "Strong track record of successful placements",
+    },
+    {
+      id: "career-growth",
+      icon: "💡",
+      title: "Career Growth",
+      text: "Long-term career development strategies",
+    },
+  ];
 
   return (
     <div id="main" role="main" className="feature-detail-container">
@@ -48,21 +69,24 @@ function CareerFocused() {
           <section className="detail-section">
             <h2>Career Outcomes</h2>
             <div className="benefits-grid">
-              <div className="benefit-box">
-                <div className="benefit-icon">📈</div>
-                <h3>Skill Enhancement</h3>
-                <p>Master in-demand skills for career advancement</p>
-              </div>
-              <div className="benefit-box">
-                <div className="benefit-icon">🏢</div>
-                <h3>Job Placement</h3>
-                <p>Strong track record of successful placements</p>
-              </div>
-              <div className="benefit-box">
-                <div className="benefit-icon">💡</div>
-                <h3>Career Growth</h3>
-                <p>Long-term career development strategies</p>
-              </div>
+              {benefits.map((item) => (
+                <div
+                  key={item.id}
+                  className="benefit-box"
+                  role="button"
+                  tabIndex="0"
+                  onClick={() => navigate(`/benefits/${item.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      navigate(`/benefits/${item.id}`);
+                    }
+                  }}
+                >
+                  <div className="benefit-icon">{item.icon}</div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -76,3 +100,4 @@ function CareerFocused() {
 }
 
 export default CareerFocused;
+

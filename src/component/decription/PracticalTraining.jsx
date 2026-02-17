@@ -1,7 +1,28 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 
 function PracticalTraining() {
   const navigate = useNavigate();
+
+  const benefits = [
+    {
+      id: "fast-learning",
+      icon: "⚡",
+      title: "Fast Learning",
+      text: "Accelerated programs designed for quick skill acquisition",
+    },
+    {
+      id: "goal-oriented",
+      icon: "🎯",
+      title: "Goal-Oriented",
+      text: "Clear objectives and outcomes for each course",
+    },
+    {
+      id: "expert-guidance",
+      icon: "👨‍💼",
+      title: "Expert Guidance",
+      text: "Learn from industry experts and experienced trainers",
+    },
+  ];
 
   return (
     <div id="main" role="main" className="feature-detail-container">
@@ -48,21 +69,24 @@ function PracticalTraining() {
           <section className="detail-section">
             <h2>Benefits</h2>
             <div className="benefits-grid">
-              <div className="benefit-box">
-                <div className="benefit-icon">⚡</div>
-                <h3>Fast Learning</h3>
-                <p>Accelerated programs designed for quick skill acquisition</p>
-              </div>
-              <div className="benefit-box">
-                <div className="benefit-icon">🎯</div>
-                <h3>Goal-Oriented</h3>
-                <p>Clear objectives and outcomes for each course</p>
-              </div>
-              <div className="benefit-box">
-                <div className="benefit-icon">👨‍💼</div>
-                <h3>Expert Guidance</h3>
-                <p>Learn from industry experts and experienced trainers</p>
-              </div>
+              {benefits.map((item) => (
+                <div
+                  key={item.id}
+                  className="benefit-box"
+                  role="button"
+                  tabIndex="0"
+                  onClick={() => navigate(`/benefits/${item.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      navigate(`/benefits/${item.id}`);
+                    }
+                  }}
+                >
+                  <div className="benefit-icon">{item.icon}</div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -76,3 +100,5 @@ function PracticalTraining() {
 }
 
 export default PracticalTraining;
+
+

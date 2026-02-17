@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 
 function TTIDescription() {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ function TTIDescription() {
       title: "Practical Training",
       subtitle: "Hands-on learning experience",
       path: "/practical-training",
-      color: "#38bdf8"
+      color: "#38bdf8",
     },
     {
       id: "career",
@@ -18,7 +18,7 @@ function TTIDescription() {
       title: "Career Focused",
       subtitle: "Industry-aligned curriculum",
       path: "/career-focused",
-      color: "#22d3ee"
+      color: "#22d3ee",
     },
     {
       id: "inclusive",
@@ -26,8 +26,8 @@ function TTIDescription() {
       title: "Inclusive Education",
       subtitle: "Accessible for everyone",
       path: "/inclusive-education",
-      color: "#06b6d4"
-    }
+      color: "#06b6d4",
+    },
   ];
 
   const handleFeatureClick = (path) => {
@@ -49,10 +49,10 @@ function TTIDescription() {
             career-oriented, and inclusive education. We empower individuals with industry-relevant
             skills to excel in their professional journeys.
           </p>
-          
+
           <div className="features-grid">
             {features.map((feature) => (
-              <div 
+              <div
                 key={feature.id}
                 className="feature-item"
                 onClick={() => handleFeatureClick(feature.path)}
@@ -60,7 +60,7 @@ function TTIDescription() {
                 tabIndex="0"
                 aria-label={`Open ${feature.title} details - ${feature.subtitle}`}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') handleFeatureClick(feature.path);
+                  if (e.key === "Enter" || e.key === " ") handleFeatureClick(feature.path);
                 }}
               >
                 <div className="feature-icon" aria-hidden="true">{feature.icon}</div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import InputField from "./InputFeild";
@@ -9,7 +9,8 @@ import Ratio from "./Ratio";
 import RatioKnowledge from "./RatioKnowledge";
 import RatioBasic from "./RatioBasic";
 
-const API_BASE_URL = "https://tti-dashborad.onrender.com";
+// const API_BASE_URL = "https://tti-dashborad.onrender.com";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5550").replace(/\/$/, "");
 const formatDobForAssistiveText = (value) => {
   if (!value) return "";
   const date = new Date(`${value}T00:00:00`);
@@ -72,6 +73,33 @@ const handleChange = (e) => {
   }));
 };
 
+  const fillFakeData = () => {
+    const fallbackState = Object.keys(DistrictData)[0] || "";
+    const selectedState = DistrictData.Maharashtra ? "Maharashtra" : fallbackState;
+    const selectedDistrict = (DistrictData[selectedState] && DistrictData[selectedState][0]) || "";
+
+    setForm((prev) => ({
+      ...prev,
+      name: "Harsha Demo",
+      email: `harsha.demo.${Date.now().toString().slice(-5)}@example.com`,
+      mobile: "9876543210",
+      dob: "2001-08-15",
+      gender: "Male",
+      state: selectedState,
+      district: selectedDistrict,
+      course: "BasicComputers",
+      disabilityStatus: "40% locomotor disability",
+      education: "B.Com Final Year",
+      enrolledCourse: "Spoken English",
+      basicComputerKnowledge: "Yes",
+      basicEnglishSkills: "Average",
+      ScreenReader: "Yes",
+      declaration: true,
+    }));
+    setStatus("");
+    setMessage("");
+  };
+
   /* ================== HANDLE SUBMIT ================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,7 +148,8 @@ const handleChange = (e) => {
         setMessage("You have already submitted the form.");
       } else {
         setStatus("error");
-        const errorText = data.error || data.message || `Submission failed with status ${res.status}`;
+        const detailsText = Array.isArray(data.details) ? `: ${data.details.join(", ")}` : "";
+        const errorText = (data.error || data.message || `Submission failed with status ${res.status}`) + detailsText;
         setMessage(errorText);
       }
     } catch (err) {
@@ -311,9 +340,18 @@ const handleChange = (e) => {
         </div>
 
         <div className="form-buttons-wrapper">
-          {/* <Link to="/" className="back-btn" aria-label="Go to description page">
+          <button
+            type="button"
+            className="back-btn"
+            onClick={fillFakeData}
+            aria-label="Fill fake test data"
+          >
+            Fill Fake Data
+          </button>
+
+          <Link to="/register" className="back-btn" aria-label="Go to description page">
             Description
-          </Link> */}
+          </Link>
 
           <button
             type="submit"
@@ -328,7 +366,7 @@ const handleChange = (e) => {
         {status && (
           <div className={`status-box ${status}`} role="alert">
             <div className="status-icon">
-              {status === "success" ? "✓" : "✕"}
+              {status === "success" ? "" : "x"}
             </div>
             <p>{message}</p>
           </div>
@@ -351,4 +389,6 @@ const handleChange = (e) => {
 }
 
 export default AdmissionForm;
+
+
 
