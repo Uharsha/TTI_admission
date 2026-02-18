@@ -32,6 +32,9 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/admission", admissionRoutes);
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
 
 mongoose
   .connect(process.env.MONGO_URI)

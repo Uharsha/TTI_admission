@@ -93,7 +93,7 @@ router.post(
       const mailResults = await Promise.allSettled([
         transporter.sendMail({
           to: user.email,
-          subject: "Admission Submitted â€“ TTI",
+          subject: "Admission Submitted TTI",
           html: `Dear ${user.name}, <br> <br>
 
 Thank you for applying to the <b>TTI Foundation</b>.<br>
