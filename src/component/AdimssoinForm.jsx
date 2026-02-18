@@ -323,7 +323,7 @@ const handleChange = (e) => {
        <InputField id="marks" label="Degree Certificate" type="file" name="Degree_memo" placeholder="Upload degree certificate" required/>
        <InputField id="doctor" label="Medical certificate" type="file" name="doctor" placeholder="Upload medical certificate" required/>
 
-       <div style={{ display: "flex", gap: "10px", marginTop: "20px", color: "white", alignItems: "flex-start" }}>
+       <div style={{ display: "flex", gap: "10px", marginTop: "20px", marginBottom: "16px", color: "white", alignItems: "flex-start" }}>
         <input
          id="declaration"
          type="checkbox"
@@ -334,7 +334,7 @@ const handleChange = (e) => {
          aria-required={true}
         />
 
-          <div style={{ fontSize: "12px" }}>
+          <div style={{ fontSize: "14px", lineHeight: 1.6, fontWeight: 500 }}>
             <label htmlFor="declaration" style={{ cursor: "pointer" }} required>
               I hereby declare that the information provided is true to the best of my knowledge. I understand that any false information may lead to the rejection of my application.
             </label>{" "}
