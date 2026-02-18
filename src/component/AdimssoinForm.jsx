@@ -376,7 +376,7 @@ const handleChange = (e) => {
         {status && (
           <div className={`status-box ${status}`} role="alert">
             <div className="status-icon">
-              {status === "success" ? "" : "x"}
+              {status === "success" ? "✓" : "✕"}
             </div>
             <p>{message}</p>
           </div>

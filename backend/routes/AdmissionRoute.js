@@ -1,4 +1,4 @@
-const cloudinary = require("cloudinary").v2;
+﻿const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
 
@@ -30,6 +30,18 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({ storage });
+const normalizeRating = (value) => {
+  if (value === undefined || value === null) return value;
+  const cleaned = String(value).trim();
+  if (!cleaned) return cleaned;
+
+  const lower = cleaned.toLowerCase();
+  if (lower === "none") return "None";
+
+  const valid = ["Fair", "Good", "Excellent", "Outstanding"];
+  const normalized = cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+  return valid.includes(normalized) ? normalized : cleaned;
+};
 
 /* ================== SAVE ADMISSION ================== */
 router.post(
@@ -57,6 +69,9 @@ router.post(
       const admissionData = {
         ...req.body,
         course: req.body.course ? req.body.course.trim() : null,
+        basicComputerKnowledge: normalizeRating(req.body.basicComputerKnowledge),
+        basicEnglishSkills: normalizeRating(req.body.basicEnglishSkills),
+        ScreenReader: normalizeRating(req.body.ScreenReader),
         RulesDeclaration: Boolean(req.body.declaration === "true"),
         passport_photo: req.files["passport_photo"]?.[0]?.path || null,
         adhar: req.files["adhar"]?.[0]?.path || null,
@@ -74,11 +89,11 @@ router.post(
       const admission = new Admission(admissionData);
       const user = await admission.save();
 
-      /* 📧 Non-blocking mails: submission should not fail if mail config is broken */
+      /* ðŸ“§ Non-blocking mails: submission should not fail if mail config is broken */
       const mailResults = await Promise.allSettled([
         transporter.sendMail({
           to: user.email,
-          subject: "Admission Submitted – TTI",
+          subject: "Admission Submitted â€“ TTI",
           html: `Dear ${user.name}, <br> <br>
 
 Thank you for applying to the <b>TTI Foundation</b>.<br>
@@ -88,7 +103,7 @@ We are pleased to inform you that your admission application has been <b>success
 Please ensure that you regularly check your email for updates regarding your application status.<br><br>
 if you have any questions or need further assistance, feel free to contact us at <a href="tel:${process.env.CONTACT_NUMBER}">${process.env.CONTACT_NUMBER}</a> or <a href="mailto:${process.env.HEAD_EMAIL}">${process.env.HEAD_EMAIL}</a><br><br>
 Warm regards,<br>
-<b>TTI Foundation – Admissions Team</b><br><br>
+<b>TTI Foundation â€“ Admissions Team</b><br><br>
 <p style="font-size:12px;color:#666;">
 This is an automatically generated email. Replies to this message are not monitored.
 </p>
@@ -119,7 +134,7 @@ Course Applied: ${user.course}<br>
 Please log in to the admin dashboard to review and take the necessary action.<br><br>
 
 Regards,<br>
-<b>TTI Foundation – Admission System</b><br>
+<b>TTI Foundation â€“ Admission System</b><br>
 <p style="font-size:12px;color:#666;">
 This is an automatically generated email. Replies to this message are not monitored.
 </p>
@@ -143,6 +158,15 @@ This is an automatically generated email. Replies to this message are not monito
       if (err && err.code === 11000) {
         return res.status(409).json({ error: "You have already submitted the form with this email or mobile." });
       }
+
+      if (err && err.name === "ValidationError") {
+        const details = Object.values(err.errors || {}).map((e) => e.message);
+        return res.status(400).json({
+          error: "Admission validation failed",
+          details,
+        });
+      }
+
       console.error("saveAdmission failed:", err);
       res.status(500).json({ error: err.message || "Internal server error" });
     }
@@ -168,10 +192,10 @@ router.put("/head/approve/:id", async (req, res) => {
     user.status = "HEAD_ACCEPTED";
     await user.save();
 
-    /* 📧 MAIL ONLY TO TEACHER */
+    /* ðŸ“§ MAIL ONLY TO TEACHER */
     await transporter.sendMail({
       to: teacher.email,
-      subject: "Candidate Approved – Schedule Interview",
+      subject: "Candidate Approved â€“ Schedule Interview",
       html: `
        Dear ${teacher.name},<br>
 
@@ -189,7 +213,7 @@ Course: ${user.course}<br>
 Please log in to the dashboard and schedule the interview at your convenience.<br><br>
 
 Best regards,<br>
-<b>TTI Foundation – Admissions Team</b><br>
+<b>TTI Foundation â€“ Admissions Team</b><br>
 <p style="font-size:12px;color:#666;">
 This is an automatically generated email. Replies to this message are not monitored.
 </p>
@@ -244,7 +268,7 @@ router.put("/head/reject/:id",  async (req, res) => {
 
     <br>
     Warm regards,<br>
-    <b>TTI Foundation – Admissions Team</b>
+    <b>TTI Foundation â€“ Admissions Team</b>
 
     <br><br>
     <hr>
@@ -278,10 +302,10 @@ router.post("/schedule-interview/:id",  async (req, res) => {
       { new: true }
     );
 
-    // 📧 Mail interview details to student
+    // ðŸ“§ Mail interview details to student
     await transporter.sendMail({
       to: updatedStudent.email,
-      subject: "Interview Scheduled – TTI",
+      subject: "Interview Scheduled â€“ TTI",
       html: `
        Dear ${updatedStudent.name},<br>
 
@@ -297,7 +321,7 @@ Please ensure that you join the interview on time.<br>
 We wish you the very best.<br><br>
 
 Sincerely,<br>
-<b>TTI Foundation – Admissions Team</b><br>
+<b>TTI Foundation â€“ Admissions Team</b><br>
  <p style="font-size:12px;color:#666;">
 This is an automatically generated email. Replies to this message are not monitored.
 </p>
@@ -325,10 +349,10 @@ router.put("/final/approve/:id",  async (req, res) => {
     user.decisionDone = true;
     await user.save();
 
-    // 📧 Congratulations mail
+    // ðŸ“§ Congratulations mail
     await transporter.sendMail({
       to: user.email,
-      subject: "Congratulations – TTI",
+      subject: "Congratulations â€“ TTI",
       html: `
       Dear ${user.name},<br>
 
@@ -341,7 +365,7 @@ Further instructions regarding onboarding will be shared with you shortly.<br>
 We look forward to having you with us.<br><br>
 
 Warm regards,<br>
-<b>TTI Foundation – Admissions Team</b><br>
+<b>TTI Foundation â€“ Admissions Team</b><br>
 <p style="font-size:12px;color:#666;">
 This is an automatically generated email. Replies to this message are not monitored.
 </p>
@@ -368,10 +392,10 @@ router.put("/final/reject/:id",  async (req, res) => {
     user.decisionDone = true;
     await user.save();
 
-    // 📧 Apology mail
+    // ðŸ“§ Apology mail
     await transporter.sendMail({
       to: user.email,
-      subject: "Interview Result – TTI",
+      subject: "Interview Result â€“ TTI",
       html: `
       Dear ${user.name},<br>
 
@@ -384,7 +408,7 @@ We truly appreciate your interest and encourage you to apply again in the future
 We wish you all the best in your academic and professional journey.<br><br>
 
 Sincerely,<br>
-<b>TTI Foundation – Admissions Team</b><br>
+<b>TTI Foundation â€“ Admissions Team</b><br>
 <p style="font-size:12px;color:#666;">
 This is an automatically generated email. Replies to this message are not monitored.
 </p>
@@ -483,3 +507,4 @@ router.get("/interview_required", async (req, res) => {
 });
 
 module.exports = router;
+

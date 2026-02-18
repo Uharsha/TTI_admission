@@ -50,8 +50,8 @@ function App() {
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<TTIDescription />} />
-        <Route path="/register" element={<AdmissionForm />} />
+        {/* <Route path="/" element={<TTIDescription />} /> */}
+        <Route path="/" element={<AdmissionForm />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/practical-training" element={<PracticalTraining />} />
         <Route path="/career-focused" element={<CareerFocused />} />

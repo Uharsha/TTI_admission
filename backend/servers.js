@@ -1,4 +1,4 @@
-require("dotenv").config();
+﻿require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -13,10 +13,12 @@ const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173,https
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const isLocalDevOrigin = (origin) => /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || isLocalDevOrigin(origin)) {
         return callback(null, true);
       }
       return callback(new Error("Not allowed by CORS"));
@@ -40,3 +42,4 @@ const PORT = process.env.PORT || 5550;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
