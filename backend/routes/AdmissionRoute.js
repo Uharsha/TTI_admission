@@ -43,6 +43,17 @@ const normalizeRating = (value) => {
   return valid.includes(normalized) ? normalized : cleaned;
 };
 
+const safeSendMail = async (mailOptions) => {
+  try {
+    await transporter.sendMail(mailOptions);
+    return { success: true, error: null };
+  } catch (err) {
+    const error = err?.message || "Mail send failed";
+    console.error("Mail send failed:", error);
+    return { success: false, error };
+  }
+};
+
 /* ================== SAVE ADMISSION ================== */
 router.post(
   "/saveAdmission",
@@ -90,8 +101,8 @@ router.post(
       const user = await admission.save();
 
       /* ðŸ“§ Non-blocking mails: submission should not fail if mail config is broken */
-      const mailResults = await Promise.allSettled([
-        transporter.sendMail({
+      const mailResults = await Promise.all([
+        safeSendMail({
           to: user.email,
           subject: "Admission Submitted TTI",
           html: `Dear ${user.name}, <br> <br>
@@ -109,7 +120,7 @@ This is an automatically generated email. Replies to this message are not monito
 </p>
 `,
         }),
-        transporter.sendMail({
+        safeSendMail({
           to: process.env.HEAD_EMAIL,
           subject: "New Admission Request",
           html: `
@@ -143,9 +154,9 @@ This is an automatically generated email. Replies to this message are not monito
         }),
       ]);
 
-      const mailFailures = mailResults.filter((result) => result.status === "rejected");
+      const mailFailures = mailResults.filter((result) => !result.success);
       if (mailFailures.length > 0) {
-        console.error("Admission mail delivery failed:", mailFailures.map((m) => m.reason?.message || m.reason));
+        console.error("Admission mail delivery failed:", mailFailures.map((m) => m.error));
       }
 
       res.status(201).json({
