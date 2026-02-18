@@ -338,15 +338,17 @@ const handleChange = (e) => {
             <label htmlFor="declaration" style={{ cursor: "pointer" }} required>
               I hereby declare that the information provided is true to the best of my knowledge. I understand that any false information may lead to the rejection of my application.
             </label>{" "}
+            <br />
             <Link
               to="/rules"
               className="rules-link"
               onClick={(e) => e.stopPropagation()}
-            >
+             >
               Read the Rules and Regulations
             </Link>{" "}
             before submitting the form.
           </div>
+          <br />
         </div>
 
         <div className="form-buttons-wrapper">
