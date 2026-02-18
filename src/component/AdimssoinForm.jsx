@@ -9,8 +9,8 @@ import Ratio from "./Ratio";
 import RatioKnowledge from "./RatioKnowledge";
 import RatioBasic from "./RatioBasic";
 
-// const API_BASE_URL = "https://tti-dashborad.onrender.com";
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5550").replace(/\/$/, "");
+const API_BASE_URL = "https://tti-dashborad.onrender.com";
+// const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5550").replace(/\/$/, "");
 const formatDobForAssistiveText = (value) => {
   if (!value) return "";
   const date = new Date(`${value}T00:00:00`);
@@ -350,18 +350,9 @@ const handleChange = (e) => {
         </div>
 
         <div className="form-buttons-wrapper">
-          <button
-            type="button"
-            className="back-btn"
-            onClick={fillFakeData}
-            aria-label="Fill fake test data"
-          >
-            Fill Fake Data
-          </button>
+         
 
-          <Link to="/register" className="back-btn" aria-label="Go to description page">
-            Description
-          </Link>
+         
 
           <button
             type="submit"
@@ -376,7 +367,7 @@ const handleChange = (e) => {
         {status && (
           <div className={`status-box ${status}`} role="alert">
             <div className="status-icon">
-              {status === "success" ? "✓" : "✕"}
+              {status === "success" ? "✓" : "✗"}
             </div>
             <p>{message}</p>
           </div>
