@@ -11,7 +11,6 @@ import RatioBasic from "./RatioBasic";
 
 const API_BASE_URL = "https://tti-dashborad.onrender.com";
 // const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5550").replace(/\/$/, "");
-const REQUEST_TIMEOUT_MS = 30000;
 const formatDobForAssistiveText = (value) => {
   if (!value) return "";
   const date = new Date(`${value}T00:00:00`);
@@ -146,15 +145,10 @@ const handleChange = (e) => {
 
     const formData = new FormData(e.target);
     
-    let timeoutId = null;
-    const controller = new AbortController();
-    timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
     try {
       const res = await fetch(`${API_BASE_URL}/admission/saveAdmission`, {
         method: "POST",
         body: formData,
-        signal: controller.signal,
       });
 
       const rawText = await res.text();
@@ -178,13 +172,8 @@ const handleChange = (e) => {
       }
     } catch (err) {
       setStatus("error");
-      if (err?.name === "AbortError") {
-        setMessage("Request timed out after 30 seconds. Please try again.");
-      } else {
-        setMessage("Server error: " + err.message);
-      }
+      setMessage("Server error: " + err.message);
     } finally {
-      if (timeoutId) window.clearTimeout(timeoutId);
       setLoading(false);
     }
    
