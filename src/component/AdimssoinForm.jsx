@@ -343,12 +343,12 @@ const handleChange = (e) => {
               to="/rules"
               className="rules-link"
               onClick={(e) => e.stopPropagation()}
-             >
+             style={{ cursor: "pointer" }} >
               Read the Rules and Regulations
             </Link>{" "}
             before submitting the form.
-          </div>
           <br />
+          </div>
         </div>
 
         <div className="form-buttons-wrapper">
